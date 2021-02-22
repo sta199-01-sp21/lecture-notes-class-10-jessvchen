@@ -48,18 +48,21 @@ xtabs(~ Treatment + Improved, data = Arthritis) %>%
   addmargins()
 ```
 
-- How many patients were enrolled in the clinical trial?
+- **How many patients were enrolled in the clinical trial?** There were 84 
+patients in this trial.
 
-- What is the probability a randomly selected patient received the placebo?
+- **What is the probability a randomly selected patient received the placebo?** 
+The probability is 43 out of 84, or 51.2%.
 
-- What is the probability a randomly selected patient received the placebo
-  and had a marked improvement?
+- **What is the probability a randomly selected patient received the placebo 
+and had a marked improvement?** The probability is 7 out of 84, or 8.3%.
   
-- What is the probability a randomly selected patient received the placebo
-  and the treatment?
+- **What is the probability a randomly selected patient received the placebo
+  and the treatment?** These two things are not possible at the same time, so 
+  the probability is 0.
   
-- What is the probability a randomly selected patient had some improvement or
-  was on the treatment?
+- **What is the probability a randomly selected patient had some improvement or
+  was on the treatment?** The probability is 48 out of 84, or 57.1%.
 
 ## Using computer simulations to calculate probabilities
 
@@ -72,9 +75,10 @@ a vector called `marbles`.
 marbles <- c("red", "red", "white", "red", "blue", "blue", "red", "blue")
 ```
 
-Suppose we draw a single marble from our imaginary box, where all the marbles
+**Suppose we draw a single marble from our imaginary box, where all the marbles
 are equally likely to be selected. What is the probability the marble is blue? 
-How about white?
+How about white?** The probability the marble is blue is 3/8, or 37.5%. The
+probability of it being white is 1/8 or 12.5%.
 
 We can simulate this "drawing" with the `sample()` function.
 
@@ -100,7 +104,9 @@ counts <- table(draw_results)
 prop.table(counts)
 ```
 
-How close is this value to the "true" probability?
+**How close is this value to the "true" probability?** It is pretty close, as 
+there are a lot of draws. As the size of samples increase, the probability will
+get closer and closer to "true" probability because of the law of large numbers.
 
 **To summarize our process:**
 
@@ -116,7 +122,8 @@ What if we want to compute the probability of getting two marbles of the same
 color if we make two draws with replacement? We haven't discussed how to
 compute this theoretically yet, but this is what computers are good at.
 
-Before we do this, what is your guess as to what the probability will be?
+**Before we do this, what is your guess as to what the probability will be?**
+It is unlikely of getting the same color twice in a row. 
 
 We'll still use `sample()` to run our simulation many times, but we'll
 use `dplyr` functions to compute the relative frequencies.
@@ -155,18 +162,26 @@ difference between dice roll 1 and dice roll 2 is equal to 4.
 
 Perform a simulation to compute this empirical probability.
 
-Write down your guess to the answer before you calculate it.
+**Write down your guess to the answer before you calculate it.** I think that 
+event 2 is more likely.
 
 ```{r simulate_rolls}
-
+roll_results <- tibble(
+  die_1 = replicate(n = 10000, expr = sample(1:6, size = 1)),
+  die_2 = replicate(n = 10000, expr = sample(1:6, size = 1)))
 ```
 
 ```{r identify_events}
-
+roll_results <- roll_results %>% 
+  mutate(event_1 = die_1 ^ 2 == die_2,
+         event_2 = abs(die_1 - die_2) == 4)
+roll_results
 ```
 
 ```{r summarize_rolls}
-
+roll_results %>%
+  summarise(event_prob_1 = mean(event_1),
+            event_prob_2 = mean(event_2))
 ```
 
 ## Additional Resources-please look at before Weds.
